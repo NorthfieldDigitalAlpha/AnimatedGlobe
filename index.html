@@ -1,98 +1,52 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Premium Globe</title>
+  <meta charset="utf-8">
+  <title>Globe</title>
   <style>
-    body { margin: 0; overflow: hidden; background: black; }
+    body { margin: 0; background: black; overflow: hidden; }
   </style>
 </head>
 <body>
 
-<script type="module">
-  import * as THREE from 'https://unpkg.com/three@0.155.0/build/three.module.js';
-  import ThreeGlobe from 'https://unpkg.com/three-globe@2.30.0/dist/three-globe.module.js';
+<!-- THREE -->
+<script src="https://unpkg.com/three@0.126.1/build/three.min.js"></script>
 
-  const scene = new THREE.Scene();
+<!-- GLOBE -->
+<script src="https://unpkg.com/globe.gl"></script>
 
-  const camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 2000);
-  camera.position.z = 300;
+<script>
+  const world = Globe()
+    (document.body)
+    .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-dark.jpg')
+    .backgroundColor('#000');
 
-  const renderer = new THREE.WebGLRenderer({ antialias: true });
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setPixelRatio(window.devicePixelRatio);
-  document.body.appendChild(renderer.domElement);
-
-  // 🌍 Globe
-  const globe = new ThreeGlobe()
-    .globeImageUrl('//unpkg.com/three-globe/example/img/earth-dark.jpg')
-    .bumpImageUrl('//unpkg.com/three-globe/example/img/earth-topology.png')
-    .showAtmosphere(true)
-    .atmosphereColor('#FFD700')
-    .atmosphereAltitude(0.2);
-
-  scene.add(globe);
-
-  // ✨ Cities (glowing dots)
-  const cities = [
-    { lat: 40.7128, lng: -74.0060 }, // NYC
-    { lat: 51.5074, lng: -0.1278 },  // London
-    { lat: 35.6762, lng: 139.6503 }, // Tokyo
-    { lat: 48.8566, lng: 2.3522 },   // Paris
-    { lat: 37.7749, lng: -122.4194 } // SF
-  ];
-
-  globe.pointsData(cities)
-    .pointColor(() => '#FFD700')
-    .pointAltitude(0.02)
-    .pointRadius(0.5);
-
-  // ⚡ Arc connections
-  const arcs = [
+  // Golden arcs
+  world.arcsData([
     { startLat: 40.7128, startLng: -74.0060, endLat: 51.5074, endLng: -0.1278 },
-    { startLat: 34.0522, startLng: -118.2437, endLat: 35.6762, endLng: 139.6503 },
-    { startLat: 48.8566, startLng: 2.3522, endLat: 37.7749, endLng: -122.4194 }
-  ];
+    { startLat: 34.0522, startLng: -118.2437, endLat: 35.6762, endLng: 139.6503 }
+  ])
+  .arcColor(() => 'gold')
+  .arcDashLength(0.4)
+  .arcDashGap(0.2)
+  .arcDashAnimateTime(2000);
 
-  globe.arcsData(arcs)
-    .arcColor(() => ['#FFD700'])
-    .arcAltitude(0.25)
-    .arcStroke(0.6)
-    .arcDashLength(0.3)
-    .arcDashGap(0.2)
-    .arcDashAnimateTime(1500);
+  // Glowing points
+  world.pointsData([
+    { lat: 40.7128, lng: -74.0060 },
+    { lat: 51.5074, lng: -0.1278 },
+    { lat: 35.6762, lng: 139.6503 }
+  ])
+  .pointColor(() => 'gold')
+  .pointAltitude(0.02)
+  .pointRadius(0.5);
 
-  // 💡 Lighting (cinematic)
-  const ambientLight = new THREE.AmbientLight(0x888888);
-  scene.add(ambientLight);
-
-  const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-  directionalLight.position.set(100, 200, 300);
-  scene.add(directionalLight);
-
-  const backLight = new THREE.DirectionalLight(0xFFD700, 0.5);
-  backLight.position.set(-200, -100, -200);
-  scene.add(backLight);
-
-  // 🎥 Animation
-  function animate() {
-    requestAnimationFrame(animate);
-    globe.rotation.y += 0.0015;
-    renderer.render(scene, camera);
-  }
-
-  animate();
-
-  // Responsive
-  window.addEventListener('resize', () => {
-    camera.aspect = window.innerWidth/window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-  });
 </script>
 
 </body>
 </html>
+ 
+
  
  
 
