@@ -2,50 +2,59 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Globe</title>
+  <title>Heatmap Globe</title>
   <style>
     body { margin: 0; background: black; overflow: hidden; }
   </style>
 </head>
 <body>
 
-<!-- THREE -->
+<!-- Three.js -->
 <script src="https://unpkg.com/three@0.126.1/build/three.min.js"></script>
 
-<!-- GLOBE -->
+<!-- Globe.gl -->
 <script src="https://unpkg.com/globe.gl"></script>
 
 <script>
-  const world = Globe()
+  const globe = Globe()
     (document.body)
     .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-dark.jpg')
     .backgroundColor('#000');
 
-  // Golden arcs
-  world.arcsData([
-    { startLat: 40.7128, startLng: -74.0060, endLat: 51.5074, endLng: -0.1278 },
-    { startLat: 34.0522, startLng: -118.2437, endLat: 35.6762, endLng: 139.6503 }
-  ])
-  .arcColor(() => 'gold')
-  .arcDashLength(0.4)
-  .arcDashGap(0.2)
-  .arcDashAnimateTime(2000);
+  // 🌍 HEATMAP DATA (EDIT THIS)
+  const heatData = [
+    { lat: 40.7128, lng: -74.0060, value: 0.9 }, // NYC
+    { lat: 34.0522, lng: -118.2437, value: 0.7 }, // LA
+    { lat: 51.5074, lng: -0.1278, value: 0.8 }, // London
+    { lat: 35.6762, lng: 139.6503, value: 1.0 }, // Tokyo
+    { lat: 48.8566, lng: 2.3522, value: 0.6 }  // Paris
+  ];
 
-  // Glowing points
-  world.pointsData([
-    { lat: 40.7128, lng: -74.0060 },
-    { lat: 51.5074, lng: -0.1278 },
-    { lat: 35.6762, lng: 139.6503 }
-  ])
-  .pointColor(() => 'gold')
-  .pointAltitude(0.02)
-  .pointRadius(0.5);
+  // 🔥 HEATMAP LAYER
+  globe
+    .heatmapsData([heatData])
+    .heatmapPointLat(d => d.lat)
+    .heatmapPointLng(d => d.lng)
+    .heatmapPointWeight(d => d.value)
+    .heatmapBandwidth(2.5) // spread size
+    .heatmapColorFn((val) => {
+      // custom gold heatmap gradient
+      return val < 0.3 ? "rgba(255,215,0,0.1)" :
+             val < 0.6 ? "rgba(255,215,0,0.4)" :
+             val < 0.8 ? "rgba(255,215,0,0.7)" :
+                         "rgba(255,215,0,1)";
+    });
+
+  // ✨ Optional glowing points
+  globe.pointsData(heatData)
+    .pointColor(() => "gold")
+    .pointAltitude(0.02)
+    .pointRadius(0.4);
 
 </script>
 
 </body>
-</html>
- 
+</html> 
 
  
  
